@@ -74,5 +74,14 @@ services:
     ports:
       - 9092:9092
       - 9094:9094
+
+  python: # by FK  
+    build: ../docker/python/
+    depends_on:
+      - jobmanager
+      - kafka
+    working_dir: /app
+    environment:
+      - BOOTSTRAP_SERVER=host.docker.internal:9092    
 volumes:
   flink_data:
