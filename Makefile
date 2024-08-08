@@ -32,6 +32,6 @@ bash:
 list_topics:
 	docker-compose -f $(COMPOSE_REF) run kafka kafka-topics.sh $(BOOTSTRAP) --list
 
-run_job_1:
+job_1:
 	@echo "Running job 1..."
-	docker-compose -f $(COMPOSE_REF) exec job1 python3 /app/job1.py
+	docker-compose -f $(COMPOSE_REF) run --no-deps client flink run examples/streaming/WordCount.jar
