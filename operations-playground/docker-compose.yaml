@@ -21,10 +21,12 @@ services:
   client:
     build: ../docker/ops-playground-image
     image: apache/flink-ops-playground:1-FLINK-1.16-scala_2.12
-    command: "flink run -d /opt/ClickCountJob.jar --bootstrap.servers kafka:9092 --checkpointing --event-time"
+    # command: "flink run -d /opt/ClickCountJob.jar --bootstrap.servers kafka:9092 --checkpointing --event-time"
+
     depends_on:
       - jobmanager
       - kafka
+    working_dir: /opt/flink # by FK
     volumes:
       - ./conf:/opt/flink/conf
       - flink_data:/tmp/
@@ -57,8 +59,10 @@ services:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
   zookeeper:
     image: wurstmeister/zookeeper:3.4.6
+
   kafka:
     image: wurstmeister/kafka:2.13-2.8.1
+    working_dir: /opt/kafka/bin # by FK
     environment:
       KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
       KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
@@ -66,6 +70,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_CREATE_TOPICS: "input:2:1, output:2:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_BROKER_ID: 1 # by FK
     ports:
       - 9092:9092
       - 9094:9094
