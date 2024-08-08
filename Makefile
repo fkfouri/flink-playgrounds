@@ -50,6 +50,11 @@ flink:
 bash:
 	docker-compose -f $(COMPOSE_REF) run --no-deps -it client bash
 
+sql_client:
+	@echo "Entering Flink SQL Client..."
+	docker-compose -f $(COMPOSE_REF) run --no-deps client ./bin/sql-client.sh
+
+
 job_1:
 	@echo "Running job 1..."
 	docker-compose -f $(COMPOSE_REF) run --no-deps client flink run examples/streaming/WordCount.jar
