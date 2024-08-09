@@ -1,4 +1,4 @@
-COMPOSE_REF?=operations-playground/docker-compose.yaml
+COMPOSE_REF?=../../operations-playground/docker-compose.yaml
 BOOTSTRAP_SERVER=--bootstrap-server host.docker.internal:29092
 
 .PHONY: help date
@@ -80,3 +80,8 @@ flink_bash:
 sql_client:
 	@echo "Entering Flink SQL Client..."
 	docker-compose -f $(COMPOSE_REF) run --no-deps client ./bin/sql-client.sh
+
+
+job_1:
+	@echo "Running job 1..."
+	docker-compose -f $(COMPOSE_REF) run --no-deps client flink run examples/streaming/WordCount.jar

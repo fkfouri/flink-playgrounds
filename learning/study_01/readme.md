@@ -60,6 +60,14 @@ SELECT * FROM compras;
 ```
 
 
+## Producer Python
+
+```bash
+make python_usuarios
+
+make python_compras
+```
+
 ## Python
 
 Configurando python para rodar local.
