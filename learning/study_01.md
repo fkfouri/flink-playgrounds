@@ -1,12 +1,27 @@
-# SQL-Client
+# Estudo 1
+
+Neste estudo sendo aberto o SQL do Flink e vendo os dados do Kafka.
+
+```bash
+# Sobe o playground
+make playground_up
+
+# cria os topicos
+make create_topics
+
+# entra no SQL Client
+make sql_client
+```
 
 
+## Flink SQL Client
 ```sql
-show tables;
 
 -- Config de saida (mais bonita)
 set sql-client.execution.result-mode = tableau;
 
+-- https://nightlies.apache.org/flink/flink-docs-release-1.14/docs/connectors/table/kafka/
+-- Cria tabela usuarios
 CREATE TABLE usuarios (
     cidade      STRING,
     nome        STRING,
@@ -21,9 +36,7 @@ CREATE TABLE usuarios (
     'format' = 'json'
 );
 
-SELECT * FROM usuarios;
-
--- https://nightlies.apache.org/flink/flink-docs-release-1.14/docs/connectors/table/kafka/
+-- Cria tabela compras
 CREATE TABLE compras (
     id_compra   INTEGER,
     produto     STRING,
@@ -39,7 +52,12 @@ CREATE TABLE compras (
     'format' = 'json'
 );
 
+-- exibe tabelas
 show tables;
 
 SELECT * FROM usuarios;
-``` 
+SELECT * FROM compras;
+```
+
+
+## Python

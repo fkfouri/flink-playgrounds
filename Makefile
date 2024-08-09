@@ -48,7 +48,7 @@ flink:
 	docker-compose -f $(COMPOSE_REF) run --no-deps client flink $(OPTIONS)
 
 fk_flink_bash:
-	docker-compose -f $(COMPOSE_REF) run --no-deps -it apache/fk-flink-base bash
+	docker-compose -f $(COMPOSE_REF) run --no-deps -it base_flink bash
 
 flink_bash:
 	docker-compose -f $(COMPOSE_REF) run --no-deps -it client bash
