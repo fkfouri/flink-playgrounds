@@ -5,11 +5,11 @@ BOOTSTRAP_SERVER=--bootstrap-server host.docker.internal:9092
 help:
 	@echo "Usage: make [target]\n"
 
-start_playground:
+playground_up:
 	@echo "Starting playground..."
 	-docker-compose -f $(COMPOSE_REF) up -d --build
 
-stop_playground:
+playground_down:
 	@echo "Stopping playground..."
 	-docker-compose -f $(COMPOSE_REF) down
 
@@ -17,7 +17,7 @@ ps:
 	@echo "Listing containers..."
 	-@docker-compose -f $(COMPOSE_REF) ps
 
-open_brower:
+playground_brower:
 	@echo "Opening browser..."
 # sudo apt-get install wslu 
 # wslview http://localhost:8081
@@ -30,7 +30,7 @@ open_brower:
 list_topics:
 	docker-compose -f $(COMPOSE_REF) run kafka kafka-topics.sh $(BOOTSTRAP_SERVER) --list
 
-create_topic:
+create_topics:
 	-docker-compose -f $(COMPOSE_REF) run kafka kafka-topics.sh $(BOOTSTRAP_SERVER) --create --topic compras --partitions 1 --replication-factor 1
 	-docker-compose -f $(COMPOSE_REF) run kafka kafka-topics.sh $(BOOTSTRAP_SERVER) --create --topic usuarios --partitions 1 --replication-factor 1
 	make list_topics
@@ -45,9 +45,12 @@ python_bash:
 # Flink
 ########################
 flink:
-	docker-compose -f $(COMPOSE_REF) run --no-deps client flink
+	docker-compose -f $(COMPOSE_REF) run --no-deps client flink $(OPTIONS)
 
-bash:
+fk_flink_bash:
+	docker-compose -f $(COMPOSE_REF) run --no-deps -it apache/fk-flink-base bash
+
+flink_bash:
 	docker-compose -f $(COMPOSE_REF) run --no-deps -it client bash
 
 sql_client:

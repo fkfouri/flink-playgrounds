@@ -32,7 +32,11 @@ RUN mvn clean verify
 # Build Operations Playground Image
 ###############################################################################
 
-FROM apache/flink:1.16.0-scala_2.12-java11
+# FROM apache/flink:1.16.0-scala_2.12-java11
+# by FK
+# FROM apache/flink:1.20-scala_2.12-java11 
+# FROM apache/flink:1.18-scala_2.12-java11 
+FROM apache/fk-flink-base
 
 WORKDIR /opt/flink/bin
 
