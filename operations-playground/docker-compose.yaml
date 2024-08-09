@@ -45,7 +45,7 @@ services:
   #   image: apache/flink-ops-playground:1-FLINK-1.18-scala_2.12 # by FK
   #   command: "java -classpath /opt/ClickCountJob.jar:/opt/flink/lib/* org.apache.flink.playgrounds.ops.clickcount.ClickEventGenerator --bootstrap.servers kafka:9092 --topic input"
   #   depends_on:
-  #     - kafka
+  #     - kafka1
 
   jobmanager:
     # image: apache/flink:1.18-scala_2.12-java11
@@ -71,23 +71,59 @@ services:
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
 
-  zookeeper:
-    image: wurstmeister/zookeeper:3.4.6
+  # zookeeper:
+    # image: wurstmeister/zookeeper:3.4.6
 
-  kafka:
-    image: wurstmeister/kafka:2.13-2.8.1
-    working_dir: /opt/kafka/bin # by FK
-    environment:
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
-      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-      KAFKA_CREATE_TOPICS: "input:2:1, output:2:1"
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_BROKER_ID: 1 # by FK
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    # hostname: zookeeper1
+    # container_name: zookeeper1
     ports:
-      - 9092:9092
-      - 9094:9094
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_SERVERS: zookeeper:2888:3888
+
+
+  # kafka:
+  #   image: wurstmeister/kafka:2.13-2.8.1
+  #   working_dir: /opt/kafka/bin # by FK
+  #   environment:
+  #     KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
+  #     KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
+  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+  #     KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+  #     KAFKA_CREATE_TOPICS: "input:2:1, output:2:1"
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_BROKER_ID: 1 # by FK
+  #   ports:
+  #     - 9092:9092
+  #     - 9094:9094
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    # hostname: kafka1
+    # container_name: kafka1
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+      - "9999:9999"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://localhost:9092,DOCKER://host.docker.internal:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS: "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: ${DOCKER_HOST_IP:-127.0.0.1}
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+    depends_on:
+      - zookeeper
 
   python: # by FK  
     build: ../docker/python/
@@ -96,6 +132,6 @@ services:
       - kafka
     working_dir: /app
     environment:
-      - BOOTSTRAP_SERVER=host.docker.internal:9092    
+      - BOOTSTRAP_SERVER=host.docker.internal:29092    
 volumes:
   flink_data:

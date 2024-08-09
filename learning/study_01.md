@@ -7,7 +7,7 @@ Neste estudo sendo aberto o SQL do Flink e vendo os dados do Kafka.
 make playground_up
 
 # cria os topicos
-make create_topics
+make topics_create
 
 # entra no SQL Client
 make sql_client
@@ -30,7 +30,7 @@ CREATE TABLE usuarios (
 ) WITH (
     'connector' = 'kafka',
     'topic' = 'usuarios',
-    'properties.bootstrap.servers' = 'host.docker.internal:9092',
+    'properties.bootstrap.servers' = 'host.docker.internal:29092',
     'properties.group.id' = 'group.usuarios',
     'scan.startup.mode' = 'earliest-offset',
     'format' = 'json'
@@ -46,7 +46,7 @@ CREATE TABLE compras (
 ) WITH (
     'connector' = 'kafka',
     'topic' = 'compras',
-    'properties.bootstrap.servers' = 'localhost:9092',
+    'properties.bootstrap.servers' = 'host.docker.internal:29092',
     'properties.group.id' = 'group.compras',
     'scan.startup.mode' = 'earliest-offset',
     'format' = 'json'
@@ -61,3 +61,12 @@ SELECT * FROM compras;
 
 
 ## Python
+
+Configurando python para rodar local.
+```bash
+python3 -m venv .venv
+
+source myenv/bin/activate
+
+pip install -r docker/python/requirements.txt
+```

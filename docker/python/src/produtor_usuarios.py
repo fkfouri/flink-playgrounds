@@ -5,15 +5,14 @@ import uuid
 import time
 from os import getenv
 
-if __name__ == "main":
+if __name__ == "__main__":
     conf = {
         'bootstrap.servers': getenv('BOOTSTRAP_SERVER', 'localhost:9092'),
         'client.id': 'produtor_usuarios'
     }
 
     # criar um producer
-    p = Producer(**conf)
-
+    producer = Producer(**conf)
 
     # criar um objeto Faker
     faker = Faker({'pt_BR'})
@@ -36,7 +35,7 @@ if __name__ == "main":
             }).encode('utf-8')
 
             key = str(uuid.uuid4()) 
-            p.produce('usuarios', value=compra, key=key)    
+            producer.produce('usuarios', value=compra, key=key)    
 
             count+=1
 
@@ -44,8 +43,8 @@ if __name__ == "main":
             print(f"Erro ao enviar mensagem: {e}")
         
 
-        time.sleep(0)
-        p.poll(0)
-        p.flush()
+        time.sleep(1)
+        producer.poll(0)
+        producer.flush()
 
 

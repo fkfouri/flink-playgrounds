@@ -13,3 +13,5 @@ bin/
 
 
 .devcontainer_*
+
+.venv

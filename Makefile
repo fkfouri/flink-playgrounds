@@ -1,5 +1,5 @@
 COMPOSE_REF?=operations-playground/docker-compose.yaml
-BOOTSTRAP_SERVER=--bootstrap-server host.docker.internal:9092
+BOOTSTRAP_SERVER=--bootstrap-server host.docker.internal:29092
 
 .PHONY: help date
 help:
@@ -27,13 +27,26 @@ playground_brower:
 ########################
 # Kafka
 ########################
-list_topics:
-	docker-compose -f $(COMPOSE_REF) run kafka kafka-topics.sh $(BOOTSTRAP_SERVER) --list
+topics_list:
+	docker-compose -f $(COMPOSE_REF) run kafka kafka-topics $(BOOTSTRAP_SERVER) --list
 
-create_topics:
-	-docker-compose -f $(COMPOSE_REF) run kafka kafka-topics.sh $(BOOTSTRAP_SERVER) --create --topic compras --partitions 1 --replication-factor 1
-	-docker-compose -f $(COMPOSE_REF) run kafka kafka-topics.sh $(BOOTSTRAP_SERVER) --create --topic usuarios --partitions 1 --replication-factor 1
-	make list_topics
+topics_create:
+	-docker-compose -f $(COMPOSE_REF) run kafka kafka-topics $(BOOTSTRAP_SERVER) --create --topic compras --partitions 1 --replication-factor 1
+	-docker-compose -f $(COMPOSE_REF) run kafka kafka-topics $(BOOTSTRAP_SERVER) --create --topic usuarios --partitions 1 --replication-factor 1
+	-docker-compose -f $(COMPOSE_REF) run kafka kafka-topics $(BOOTSTRAP_SERVER) --create --topic simple_test
+	make topics_list
+
+topics_remove:
+	-docker-compose -f $(COMPOSE_REF) run kafka kafka-topics $(BOOTSTRAP_SERVER) --delete --topic compras
+	-docker-compose -f $(COMPOSE_REF) run kafka kafka-topics $(BOOTSTRAP_SERVER) --delete --topic usuarios
+	-docker-compose -f $(COMPOSE_REF) run kafka kafka-topics $(BOOTSTRAP_SERVER) --delete --topic simple_test
+	make topics_list
+
+kafka_produce:
+	docker-compose -f $(COMPOSE_REF) run kafka kafka-console-producer $(BOOTSTRAP_SERVER) --topic simple_test
+
+kafka_consume:
+	docker-compose -f $(COMPOSE_REF) run kafka kafka-console-consumer $(BOOTSTRAP_SERVER) --from-beginning --topic simple_test
 
 ########################
 # python

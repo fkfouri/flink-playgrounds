@@ -5,15 +5,26 @@ import uuid
 import time
 from os import getenv
 
-if __name__ == "main":
+def delivery_callback(err, msg):
+    if err:
+        print(f"🔴 Message delivery failed: {err}")
+    else:
+        _msg = (
+            f"🟢 Produced event to topic {msg.topic()} [{msg.partition()}] as offset {msg.offset()} \n"
+            f"Total Size: {len(msg.value()) / 1024:.3f} Kbytes"
+        )
+        print(_msg)
+
+
+if __name__ == "__main__":
     conf = {
         'bootstrap.servers': getenv('BOOTSTRAP_SERVER', 'localhost:9092'),
-        'client.id': 'produtor_compras'
+        # 'client.id': 'produtor_compras'
     }
+    topic = "compras"
 
     # criar um producer
-    p = Producer(**conf)
-
+    producer = Producer(**conf)
 
     # criar um objeto Faker
     faker = Faker({'pt_BR'})
@@ -34,19 +45,18 @@ if __name__ == "main":
                 "preco": preco,
                 "data": data,
                 "valor": valor
-            }).encode('utf-8')
+            })
 
             key = str(uuid.uuid4()) 
-            p.produce('compras', value=compra, key=key)    
-
+            producer.produce('compras', key=key, value=compra, callback=None)    
             count+=1
 
         except Exception as e:
             print(f"Erro ao enviar mensagem: {e}")
         
 
-        time.sleep(0)
-        p.poll(0)
-        p.flush()
+        time.sleep(1)
+        producer.poll(0)
+        producer.flush()
 
 
