@@ -59,5 +59,5 @@ if __name__ == "__main__":
         producer.poll(0)
         producer.flush()
 
-        if count>300: break
+        # if count>300: break
 
