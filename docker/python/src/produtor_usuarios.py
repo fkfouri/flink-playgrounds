@@ -43,8 +43,10 @@ if __name__ == "__main__":
             print(f"Erro ao enviar mensagem: {e}")
         
 
-        time.sleep(1)
+        time.sleep(0)
         producer.poll(0)
         producer.flush()
+
+        if count>300: break
 
 
