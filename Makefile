@@ -4,7 +4,32 @@ BOOTSTRAP_SERVER=--bootstrap-server host.docker.internal:29092
 .PHONY: help date
 help:
 	@echo "Usage: make [target]\n"
+#################################################################################
+# DOCKER Clear																	#
+#################################################################################
+clear-i: 
+	-docker rmi $(shell docker images --filter "dangling=true" -q --no-trunc) --force
 
+clear-c:
+	-docker rm $(shell docker ps -a -q)
+
+clear-all-c:
+	-docker container rm $(shell docker container ls -aq)
+
+clear-all-i:
+	-docker rmi $(shell docker images -a -q) --force
+
+#https://docs.docker.com/engine/reference/commandline/images/#format-the-output
+clear-date-i:
+	-docker rmi $(shell docker images "*/*/*/*:20*" --format "{{.Repository}}:{{.Tag}}") --force
+
+clear-volume:
+# -docker volume rm $(shell docker volume ls -q)
+	docker volume prune
+
+#################################################################################
+# Playground																	#
+#################################################################################
 playground_up:
 	@echo "Starting playground..."
 	-docker-compose -f $(COMPOSE_REF) up -d --build
