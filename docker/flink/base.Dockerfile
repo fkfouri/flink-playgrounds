@@ -22,3 +22,8 @@ RUN wget -P /opt/flink/lib \
 
 
 WORKDIR /opt/flink
+
+RUN apt-get update && \
+    apt-get install -y python3-pip python-is-python3
+
+RUN pip3 install apache-flink 

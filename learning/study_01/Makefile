@@ -52,15 +52,15 @@ kafka_consume:
 # python
 ########################
 python_bash:
-	docker-compose -f $(COMPOSE_REF) run --no-deps -it python bash
+	docker-compose -f $(COMPOSE_REF) run --no-deps -it python_service bash
 
 python_compras:
 	@echo "Produzindo mensagens no topico compras..."
-	docker-compose -f $(COMPOSE_REF) run --no-deps python python3 ./src/produtor_compras.py 
+	docker-compose -f $(COMPOSE_REF) run --no-deps python_service python3 ./src/produtor_compras.py 
 
 python_usuarios:
 	@echo "Produzindo mensagens no topico usuarios..."
-	docker-compose -f $(COMPOSE_REF) run --no-deps python python3 ./src/produtor_usuarios.py 
+	docker-compose -f $(COMPOSE_REF) run --no-deps python_service python3 ./src/produtor_usuarios.py 
 
 ########################
 # Flink
@@ -82,6 +82,4 @@ sql_client:
 	docker-compose -f $(COMPOSE_REF) run --no-deps client ./bin/sql-client.sh
 
 
-job_1:
-	@echo "Running job 1..."
-	docker-compose -f $(COMPOSE_REF) run --no-deps client flink run examples/streaming/WordCount.jar
+

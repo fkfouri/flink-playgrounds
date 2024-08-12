@@ -125,7 +125,7 @@ services:
     depends_on:
       - zookeeper
 
-  python: # by FK  
+  python_service: # by FK  
     build: ../docker/python/
     depends_on:
       - jobmanager

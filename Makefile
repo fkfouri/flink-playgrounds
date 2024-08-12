@@ -52,15 +52,15 @@ kafka_consume:
 # python
 ########################
 python_bash:
-	docker-compose -f $(COMPOSE_REF) run --no-deps -it python bash
+	docker-compose -f $(COMPOSE_REF) run --no-deps -it python_service bash
 
 python_compras:
 	@echo "Produzindo mensagens no topico compras..."
-	docker-compose -f $(COMPOSE_REF) run --no-deps python python3 ./src/produtor_compras.py 
+	docker-compose -f $(COMPOSE_REF) run --no-deps python_service python3 ./src/produtor_compras.py 
 
 python_usuarios:
 	@echo "Produzindo mensagens no topico usuarios..."
-	docker-compose -f $(COMPOSE_REF) run --no-deps python python3 ./src/produtor_usuarios.py 
+	docker-compose -f $(COMPOSE_REF) run --no-deps python_service python3 ./src/produtor_usuarios.py 
 
 ########################
 # Flink
@@ -80,3 +80,13 @@ flink_bash:
 sql_client:
 	@echo "Entering Flink SQL Client..."
 	docker-compose -f $(COMPOSE_REF) run --no-deps client ./bin/sql-client.sh
+
+
+job_1:
+	@echo "Running job 1..."
+	docker-compose -f $(COMPOSE_REF) run --no-deps client flink run examples/streaming/WordCount.jar
+
+job_2:
+	@echo "Running job 2, Exemplo Table_api em python"
+	docker-compose -f $(COMPOSE_REF) run --no-deps -it -v \
+	$$(pwd)/docker/python:/opt/flink/python client python ./python/src/table_api.py 	
