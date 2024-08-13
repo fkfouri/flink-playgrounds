@@ -2,6 +2,8 @@
 
 Neste estudo sendo aberto o SQL do Flink e vendo os dados do Kafka.
 
+[![Youtube](https://img.youtube.com/vi/v3rnbzLXwx8/mqdefault.jpg)](https://youtu.be/v3rnbzLXwx8)
+
 Base de Execução
 ```bash
 # Sobe o playground

@@ -14,8 +14,7 @@
 - SQL_CLIENT: https://nightlies.apache.org/flink/flink-docs-master/docs/dev/table/sqlclient/
 
 TODO:
-- Nos estudo 1 tentar fazer a agregação. 
-    - [![Youtube](https://img.youtube.com/vi/v3rnbzLXwx8/mqdefault.jpg)](https://youtu.be/v3rnbzLXwx8)
+
 - Fazer este estudo 2
     - [![Youtube](https://img.youtube.com/vi/1ezf3OyLz3w/mqdefault.jpg)](https://youtu.be/1ezf3OyLz3w) [github](https://github.com/decodableco/examples/tree/main/flink-learn/2-kafka-upsert)
     - CDC com Postgres
