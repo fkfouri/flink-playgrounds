@@ -114,7 +114,7 @@ select u.nome, u.cidade, u.id_compra, c.produto, CAST(c.preco as DOUBLE) preco, 
     on u.id_compra = c.id_compra
  where u.cidade like '%Oeste%';
 ```
-![alt text](image.png)
+![alt text](img/image.png)
 
 ```sql
 -- with e group by
@@ -130,7 +130,7 @@ with base as (
 group by cidade;
 
 ```
-![alt text](image-1.png)
+![alt text](img/image-1.png)
 
 Verificando que **Não tem o mesmo efeito de ordenação do Pentaho**.
 
@@ -149,5 +149,5 @@ group by cidade;
 ```
 > Observe pelo Changelog que quando identificou a mesma cidade (Novais do Oeste e Rodrigues do Oeste), houve um esfoço para fazer o update do valor. Ao final, resulta a tabela da figura anterior. 
 
-![alt text](image-2.png)
+![alt text](img/image-2.png)
 
