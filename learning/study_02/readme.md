@@ -35,7 +35,7 @@ CREATE TABLE shipments (
 -- read snapshot and binlogs from shipments table
 SELECT * FROM shipments;
 ```
-![alt text](image-1.png)
+![alt text](image-5.png)
 
 
 O Comando a seguir é para a execução no diretamente no Postgres.
@@ -63,6 +63,13 @@ WHERE shipment_id=1004;
 
 ## Propagando Dados do Flink para o Kafka
 
+Para esse teste, é necessario criar topicos no Kafka.
+```bash
+make topics_create
+```
+
+Crie uma tabelas com conector para o Kafka
+
 ```sql
 CREATE TABLE shipments_output_upsert (
   shipment_id INT,
@@ -70,16 +77,77 @@ CREATE TABLE shipments_output_upsert (
   origin STRING,
   destination STRING,
   is_arrived BOOLEAN,
-  db_name STRING,
-  operation_ts TIMESTAMP_LTZ(3),
+  --db_name STRING,
+  --operation_ts TIMESTAMP_LTZ(3),
   PRIMARY KEY (shipment_id) NOT ENFORCED
  )
 WITH (
   'connector' = 'upsert-kafka',
   'topic' = 'shipments',
-  'properties.bootstrap.servers' = 'redpanda:29092',
-  'key.format' = 'json', 'value.format' = 'json'
+  'properties.bootstrap.servers' = 'host.docker.internal:29092',
+  'key.format' = 'json', 
+  'value.format' = 'json'
 );
+
+```
+
+Conectando uma tabela a outra.
+
+```sql
+INSERT INTO shipments_output_upsert SELECT * FROM shipments;
+```
+![alt text](image-3.png)
+
+Ao exceutar o consumer a coisa não rolou como esperado...
+```bash
+make topics_consume_shipments
+```
+O Update e o Delete gerou as linhas nulas. 
+ - Olhando o ID 1004, o primeiro foi um Insert ok
+ - Ao fazer o Update, gerou um nulo (??) e uma linha com os dados corrigidos (Santos - > Rio Grande e Salvador -> Panama)
+ - Ao fazer o Delete, Gerou um novo nulo (??)
+ - Ao inserir novamente, apareceu Santos e Salvador.
+
+![alt text](image-4.png)
+
+
+## Emitindo Eventos de Mudança com Debezium-json
+```sql
+CREATE TABLE shipments_output_cdc (
+  shipment_id INT,
+  order_id INT,
+  origin STRING,
+  destination STRING,
+  is_arrived BOOLEAN,
+  --db_name STRING,
+  --operation_ts TIMESTAMP_LTZ(3),
+  PRIMARY KEY (shipment_id) NOT ENFORCED
+ ) WITH (
+  'connector' = 'kafka',
+  'topic' = 'shipments-cdc',
+  'properties.bootstrap.servers' = 'host.docker.internal:29092',
+  'format' = 'debezium-json'
+ );
+
+
+INSERT INTO shipments_output_cdc SELECT * FROM shipments;
 ```
 
 
+Ao exceutar o consumer a coisa não rolou como esperado...
+```bash
+make topics_consume_cdc
+```
+
+## Comparativos
+
+Com os dados originais
+
+![alt text](image-1.png)
+
+Fazendo um INSERT
+
+
+> por alguma razão, o segundo nao funcionoude acordo com o esperado. Pode ser que seja alguma limitação ou configuração errada do **debezium-json**. Mas segundo o link de referencia, era para aparecer status de atualização no Kafka.
+
+![alt text](image-6.png)
