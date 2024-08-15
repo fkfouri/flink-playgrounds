@@ -27,3 +27,11 @@ RUN apt-get update && \
     apt-get install -y python3-pip python-is-python3
 
 RUN pip3 install apache-flink 
+
+## Referencia do Estudo
+# RUN wget -P /opt/flink/lib \
+#     https://repo1.maven.org/maven2/com/ververica/flink-sql-connector-postgres-cdc/2.3.0/flink-sql-connector-postgres-cdc-2.3.0.jar
+
+## Referencia do site do Apache Flink
+RUN wget -P /opt/flink/lib \
+    https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-postgres-cdc/3.1.0/flink-sql-connector-postgres-cdc-3.1.0.jar

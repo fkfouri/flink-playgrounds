@@ -18,6 +18,7 @@ TODO:
 - Fazer este estudo 2
     - [![Youtube](https://img.youtube.com/vi/1ezf3OyLz3w/mqdefault.jpg)](https://youtu.be/1ezf3OyLz3w) [github](https://github.com/decodableco/examples/tree/main/flink-learn/2-kafka-upsert)
     - CDC com Postgres
+- Estudo Linkedin (https://www.linkedin.com/learning/apache-flink-real-time-data-engineering/setting-up-the-flink-environment)
 - Estudo 3
     - 3 containers Kafka
     - testar o Flink com Kafka caindo
