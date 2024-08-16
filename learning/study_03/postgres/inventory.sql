@@ -3,7 +3,8 @@ CREATE SCHEMA inventory;
 SET search_path TO inventory;
 
 -- enable PostGis
-CREATE EXTENSION postgis;
+-- CREATE EXTENSION postgis;
+CREATE EXTENSION IF NOT EXISTS postgis;
 
 -- Create and populate our products using a single insert with many rows
 CREATE TABLE products (

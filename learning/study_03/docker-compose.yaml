@@ -14,6 +14,7 @@ services:
   postgres:
     image: quay.io/debezium/example-postgres:2.7
     # image: postgres:11-alpine
+    # image: postgis/postgis:16-3.4-alpine
     ports:
       - "5432:5432"
     environment:
@@ -27,24 +28,25 @@ services:
     networks:
       - my-network
 
-  # redpanda:
-  #   image: docker.redpanda.com/redpandadata/redpanda:v23.1.7
-  #   command:
-  #     - redpanda start
-  #     - --smp 1
-  #     - --overprovisioned
-  #     - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
-  #     - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
-  #     - --pandaproxy-addr 0.0.0.0:8082
-  #     - --advertise-pandaproxy-addr localhost:8082
-  #   ports:
-  #     - 8081:8081
-  #     - 8082:8082
-  #     - 9092:9092
-  #     - 9644:9644
-  #     - 29092:29092
-  #   networks:
-  #     - my-network
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.1.7
+    command:
+      - redpanda start
+      - --smp 1
+      - --overprovisioned
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr 0.0.0.0:8082
+      - --advertise-pandaproxy-addr localhost:8082
+    ports:
+      - 8081:8081
+      - 8082:8082
+      - 9092:9092
+      - 9644:9644
+      - 29092:29092
+    networks:
+      - my-network
+
   # jobmanager:
   #   image: decodable-examples/flink-with-connectors:1.17.1-scala_2.12-java11
   #   build:
