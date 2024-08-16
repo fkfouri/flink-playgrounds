@@ -1,3 +1,14 @@
+
+# Estudo 3
+
+Neste estudo sendo ...
+
+- [![Youtube](https://img.youtube.com/vi/ICJ7-YyaC-4/mqdefault.jpg)](https://youtu.be/ICJ7-YyaC-4)
+- [repo GIT](https://github.com/decodableco/examples/tree/main/flink-learn/3-array-agg)
+- [Postgres CDC Connector](https://nightlies.apache.org/flink/flink-cdc-docs-release-3.1/docs/connectors/flink-sources/postgres-cdc/)
+- [Upsert Kafka SQL Connector](https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/table/upsert-kafka/)
+
+
 # Array Aggregation with Flink SQL
 
 This demo shows how to aggregate the contents of arrays with Flink SQL, using the built-in function `JSON_ARRAYAGG()`, as well as a user-defined function for emitting a fully type-safe data structure.
