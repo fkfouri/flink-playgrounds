@@ -1,6 +1,6 @@
 FROM maven:3.8-eclipse-temurin-17 AS builder
 
-COPY ./java/ /opt/solution
+COPY ./java_solution/app1/ /opt/solution
 WORKDIR /opt/solution
 RUN mvn clean verify
 

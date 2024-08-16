@@ -27,7 +27,7 @@ playground_down:
 
 ps:
 	@echo "Listing containers..."
-	-@docker-compose -f $(COMPOSE_REF) ps
+	-docker-compose -f $(COMPOSE_REF) ps
 
 playground_brower:
 	@echo "Opening browser..."
