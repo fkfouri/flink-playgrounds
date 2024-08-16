@@ -56,7 +56,15 @@ Obtain a Postgres client session:
 docker run --tty --rm -i \
   --network array-agg-network \
   quay.io/debezium/tooling:1.2 \
-  bash -c 'pgcli postgresql://postgres:postgres@postgres:5432/postgres'
+  bash -c 'pgcli postgresql://postgres:pwd@postgres:5432/study'
+```
+
+by FK
+```sql
+--by FK - para ser usado com o tooling
+SET search_path TO inventory;
+
+select * from purchase_orders;
 ```
 
 Create two topics in Redpanda:

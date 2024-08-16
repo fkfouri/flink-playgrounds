@@ -14,6 +14,12 @@ java_bash:
 postgres_bash:
 	docker-compose -f $(COMPOSE_REF) run --no-deps -it -u postgres postgres bash
 
+postgres_tooling:
+	docker run --tty --rm -i \
+	--network array-agg-network \
+	quay.io/debezium/tooling:1.2 \
+	bash -c 'pgcli postgresql://postgres:pwd@postgres:5432/study'
+
 #################################################################################
 # Playground																	#
 #################################################################################
