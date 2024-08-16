@@ -4,21 +4,29 @@ services:
     build:
       context: ./flink/
       dockerfile: Dockerfile
-    image: apache/fk-flink-base
+    image: fk/flink-base-python
 
-  # postgres:
-  #   image: quay.io/debezium/example-postgres:2.3
-  #   ports:
-  #     - "5432:5432"
-  #   environment:
-  #     - POSTGRES_DB=postgres
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=postgres
-  #   volumes:
-  #     - ./postgres/public_inventory.sql:/docker-entrypoint-initdb.d/public_inventory.sql
-  #     - ./postgres/postgresql.conf.sample:/usr/share/postgresql/postgresql.conf.sample
-  #   networks:
-  #     - my-network
+  solution:
+    build: ./java_solution
+    image: fk/java-solution
+    # command: "flink run -d /opt/ClickCountJob.jar --bootstrap.servers kafka:9092 --checkpointing --event-time"
+
+  postgres:
+    image: quay.io/debezium/example-postgres:2.7
+    # image: postgres:11-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=study
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pwd
+    volumes:
+      # - ./postgres/inventory.sql:/docker-entrypoint-initdb.d/inventory.sql
+      - ./postgres/public_inventory.sql:/docker-entrypoint-initdb.d/public_inventory.sql
+      - ./postgres/postgresql.conf.sample:/usr/share/postgresql/postgresql.conf.sample
+    networks:
+      - my-network
+
   # redpanda:
   #   image: docker.redpanda.com/redpandadata/redpanda:v23.1.7
   #   command:

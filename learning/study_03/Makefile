@@ -5,8 +5,14 @@ BOOTSTRAP_SERVER=--bootstrap-server host.docker.internal:29092
 help:
 	@echo "Usage: make [target]\n"
 #################################################################################
-# DOCKER Clear																	#
+# Java																			#
 #################################################################################
+java_bash:
+	@echo "Starting bash..."
+	-docker-compose -f $(COMPOSE_REF) run solution bash
+
+postgres_bash:
+	docker-compose -f $(COMPOSE_REF) run --no-deps -it -u postgres postgres bash
 
 #################################################################################
 # Playground																	#
