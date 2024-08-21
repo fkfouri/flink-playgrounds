@@ -1,6 +1,7 @@
 SET 'table.exec.mini-batch.enabled' = 'true';
 SET 'table.exec.mini-batch.allow-latency' = '500 ms';
 SET 'table.exec.mini-batch.size' = '1000';
+-- set 'table.exec.non-temporal-sort.enabled'='true';
 
 CREATE FUNCTION ARRAY_AGGR AS 'co.decodable.demos.arrayagg.ArrayAggr';
 
@@ -16,7 +17,7 @@ WITH (
    'port' = '5432',
    'username' = 'postgres',
    'password' = 'pwd',
-   'database-name' = 'postgres',
+   'database-name' = 'study',
    'schema-name' = 'inventory',
    'table-name' = 'purchase_orders',
    'slot.name' = 'purchase_orders_slot'
@@ -36,7 +37,7 @@ WITH (
    'port' = '5432',
    'username' = 'postgres',
    'password' = 'pwd',
-   'database-name' = 'postgres',
+   'database-name' = 'study',
    'schema-name' = 'inventory',
    'table-name' = 'order_lines',
    'slot.name' = 'order_lines_slot'
@@ -55,7 +56,7 @@ WITH (
    'port' = '5432',
    'username' = 'postgres',
    'password' = 'pwd',
-   'database-name' = 'postgres',
+   'database-name' = 'study',
    'schema-name' = 'inventory',
    'table-name' = 'products',
    'slot.name' = 'products_slot'
@@ -74,7 +75,7 @@ WITH (
    'port' = '5432',
    'username' = 'postgres',
    'password' = 'pwd',
-   'database-name' = 'postgres',
+   'database-name' = 'study',
    'schema-name' = 'inventory',
    'table-name' = 'customers',
    'slot.name' = 'customers_slot'
@@ -93,7 +94,7 @@ WITH (
    'port' = '5432',
    'username' = 'postgres',
    'password' = 'pwd',
-   'database-name' = 'postgres',
+   'database-name' = 'study',
    'schema-name' = 'inventory',
    'table-name' = 'customer_phone_numbers',
    'slot.name' = 'customer_phone_numbers_slot'
@@ -109,8 +110,10 @@ CREATE TABLE orders_with_lines_kafka (
 WITH (
     'connector' = 'upsert-kafka',
     'topic' = 'orders_with_lines',
-    'properties.bootstrap.servers' = 'redpanda:29092',
-    'key.format' = 'json', 'value.format' = 'json'
+   --  'properties.bootstrap.servers' = 'redpanda:29092',
+    'properties.bootstrap.servers' = 'host.docker.internal:29092',
+    'key.format' = 'json', 
+    'value.format' = 'json'
 );
 
 CREATE TABLE orders_with_lines_and_customer_kafka (

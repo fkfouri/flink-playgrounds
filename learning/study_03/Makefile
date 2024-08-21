@@ -39,10 +39,12 @@ topics_create:
 	-docker-compose -f $(COMPOSE_REF) exec redpanda rpk topic create orders_with_lines orders_with_lines_and_customer
 	make topics_list
 
-topics_delete :
+topics_delete:
 	-docker-compose -f $(COMPOSE_REF) exec redpanda rpk topic delete orders_with_lines orders_with_lines_and_customer
 	make topics_list
 
+topic_consume:
+	-docker-compose -f $(COMPOSE_REF) exec redpanda rpk topic consume orders_with_lines
 
 #################################################################################
 # Playground																	#

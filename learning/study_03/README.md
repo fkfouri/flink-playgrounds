@@ -9,6 +9,15 @@ Neste estudo sendo ...
 - [Upsert Kafka SQL Connector](https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/table/upsert-kafka/)
 
 
+## Observações
+- Não foi possível usar o UDF no Flink. Precisa verificar por que. Não consegui mapear o arquivo jar.
+- Outra coisa. Verificar pq o Join usando no Flink demorou tanto para atualizar depois que havia modificações das tabelas postgres.
+- Verificar por que a ordenação no Flink não foi possivel de ser executada **order by < column >**.
+
+
+
+![alt text](img/image.png)
+
 # Array Aggregation with Flink SQL
 
 This demo shows how to aggregate the contents of arrays with Flink SQL, using the built-in function `JSON_ARRAYAGG()`, as well as a user-defined function for emitting a fully type-safe data structure.
@@ -85,6 +94,72 @@ Create two topics in Redpanda:
 make topics_create
 ```
 
+## SIMPLES
+Fazendo uma agregação simples o Postgres:
+```sql
+-- pgclient
+SET search_path TO inventory;
+
+select *
+from purchase_orders po
+left join order_lines ol on ol.order_id = po.id
+order by po.id;
+
+
+-- flink SQL 
+-- a ordenacao nao funcionou, identificar por que.
+select *
+from purchase_orders po
+left join order_lines ol on order_lines.order_id = po.id;
+
+```
+-![alt text](img/image-1.png)
+```sql
+-- pgclient
+update purchase_orders set purchaser_id = 1003 where id = 10001; 
+update purchase_orders set purchaser_id = 1001 where id = 10001; 
+```
+- de: ![alt text](img/image-2.png)
+- para: ![alt text](img/image-3.png)
+
+```sql
+-- FLINK
+CREATE TABLE orders_with_lines_fk (
+  order_id INT,
+  order_date DATE,
+  purchaser_id INT,
+  lines STRING,
+  PRIMARY KEY (order_id) NOT ENFORCED
+)
+WITH (
+    'connector' = 'upsert-kafka',
+    'topic' = 'orders_with_lines',
+   --  'properties.bootstrap.servers' = 'redpanda:29092',
+    'properties.bootstrap.servers' = 'host.docker.internal:29092',
+    'key.format' = 'json', 
+    'value.format' = 'json'
+);
+
+
+
+INSERT INTO orders_with_lines_fk
+SELECT po.id, po.order_date, po.purchaser_id, ( select JSON_ARRAYAGG (JSON_OBJECT('id' VALUE ol.id, 'product_id' VALUE ol.product_id, 'quantity' VALUE ol.quantity, 'price' VALUE ol.price)) from order_lines ol WHERE ol.order_id = po.id) as lines
+from purchase_orders po;
+
+```
+
+```bash
+make topic_consume
+```
+Faça alguns updates no pgclient, e verifique a execução do Kafka.
+
+ao fim, pare o job no Flink_SQL;
+
+```sql
+stop job '<ID_JOB>';
+```
+
+
 ## Ingesting Data From Postgres
 
 Create a table in Flink SQL for ingesting the data from the `orders` table in Postgres:
@@ -103,7 +178,7 @@ CREATE TABLE purchase_orders (
    'port' = '5432',
    'username' = 'postgres',
    'password' = 'pwd',
-   'database-name' = 'postgres',
+   'database-name' = 'study',
    'schema-name' = 'inventory',
    'table-name' = 'purchase_orders',
    'slot.name' = 'purchase_orders_slot'
@@ -134,9 +209,34 @@ CREATE TABLE order_lines (
 ```
 
 Register the UDF:
+> Esta função tem como objetivo transformar uma certa coluna que esta em um formato Json,. para um Array.
+> A função foi gerada em JAVA.
 
 ```sql
+-- FLINK
 CREATE FUNCTION ARRAY_AGGR AS 'co.decodable.demos.arrayagg.ArrayAggr';
+
+
+CREATE TABLE orders_with_lines_fk (
+  order_id INT,
+  order_date DATE,
+  purchaser_id INT,
+  lines STRING,
+  PRIMARY KEY (order_id) NOT ENFORCED
+)
+WITH (
+    'connector' = 'upsert-kafka',
+    'topic' = 'orders_with_lines',
+   --  'properties.bootstrap.servers' = 'redpanda:29092',
+    'properties.bootstrap.servers' = 'host.docker.internal:29092',
+    'key.format' = 'json', 
+    'value.format' = 'json'
+);
+
+
+INSERT INTO orders_with_lines_fk
+SELECT po.id, po.order_date, po.purchaser_id, ( select ARRAY_AGGR (JSON_OBJECT('id' VALUE ol.id, 'product_id' VALUE ol.product_id, 'quantity' VALUE ol.quantity, 'price' VALUE ol.price)) from order_lines ol WHERE ol.order_id = po.id) as lines
+from purchase_orders po;
 ```
 
 Perform some data changes in Postgres (via pgcli) and observe how the data in the Flink shell changes accordingly:
