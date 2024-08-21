@@ -19,7 +19,7 @@ It uses the [Upsert Kafka SQL Connector](https://nightlies.apache.org/flink/flin
 
 Make sure to have the following software installed on your machine:
 
-* Java and Apache Maven
+* Java and Apache Maven - by FK, compilação via Docker
 * Docker and Docker Compose
 * Redpanda's rpk CLI
 * jq (optional)
@@ -29,13 +29,17 @@ Make sure to have the following software installed on your machine:
 Build the JAR with the `ARRAY_AGGR` operator:
 
 ```bash
-mvn clean verify
+# by fk - Criado pelo Docker Composer "app1-builder" or "solution"
+# mvn clean verify
 ```
 
 Start up all the components using Docker Compose:
 
 ```bash
-docker compose up --build
+# by FK
+make playground_up
+
+# docker compose up --build
 ```
 
 Obtain a Flink SQL prompt and enable mini-batching:
@@ -46,17 +50,22 @@ docker-compose run sql-client
 
 ```sql
 SET 'table.exec.mini-batch.enabled' = 'true';
+
 SET 'table.exec.mini-batch.allow-latency' = '500 ms';
+
 SET 'table.exec.mini-batch.size' = '1000';
 ```
 
 Obtain a Postgres client session:
 
 ```bash
-docker run --tty --rm -i \
-  --network array-agg-network \
-  quay.io/debezium/tooling:1.2 \
-  bash -c 'pgcli postgresql://postgres:pwd@postgres:5432/study'
+# by FK - Observe que é o mesmo comando do comentado abaixo. Foi ajustado o login e senha do BD.
+make postgres_tooling
+
+# docker run --tty --rm -i \
+#   --network array-agg-network \
+#   quay.io/debezium/tooling:1.2 \
+#   bash -c 'pgcli postgresql://postgres:pwd@postgres:5432/study'
 ```
 
 by FK
@@ -70,7 +79,10 @@ select * from purchase_orders;
 Create two topics in Redpanda:
 
 ```bash
-rpk topic create orders_with_lines orders_with_lines_and_customer
+## by FK 
+#rpk topic create orders_with_lines orders_with_lines_and_customer
+
+make topics_create
 ```
 
 ## Ingesting Data From Postgres
@@ -90,7 +102,7 @@ CREATE TABLE purchase_orders (
    'hostname' = 'postgres',
    'port' = '5432',
    'username' = 'postgres',
-   'password' = 'postgres',
+   'password' = 'pwd',
    'database-name' = 'postgres',
    'schema-name' = 'inventory',
    'table-name' = 'purchase_orders',
@@ -113,7 +125,7 @@ CREATE TABLE order_lines (
    'hostname' = 'postgres',
    'port' = '5432',
    'username' = 'postgres',
-   'password' = 'postgres',
+   'password' = 'pwd',
    'database-name' = 'postgres',
    'schema-name' = 'inventory',
    'table-name' = 'order_lines',

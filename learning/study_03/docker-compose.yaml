@@ -138,7 +138,7 @@ services:
       - 29092:29092
     networks:
       - my-network  
-
+     
 networks:
   my-network:
     name: array-agg-network
