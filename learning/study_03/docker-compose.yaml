@@ -34,6 +34,7 @@ services:
     ports:
       - "18081:8081"
     command: jobmanager
+    # command: cp /opt/flink/solutions/*.jar /opt/flink/lib && jobmanager
     environment:
       - |
         FLINK_PROPERTIES=

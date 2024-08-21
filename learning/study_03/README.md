@@ -215,6 +215,7 @@ Register the UDF:
 ```sql
 -- FLINK
 CREATE FUNCTION ARRAY_AGGR AS 'co.decodable.demos.arrayagg.ArrayAggr';
+CREATE FUNCTION ARRAY_AGGR AS 'co.decodable.demos.arrayagg.ArrayAggr' USING JAR 'file:////opt/flink/solutions/array-agg-0.1.jar';
 
 
 CREATE TABLE orders_with_lines_fk (
